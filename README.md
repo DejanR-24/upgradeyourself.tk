@@ -32,3 +32,5 @@ Once pip has finished downloading the dependencies migrate db and load data in i
 login for admin is: dejan 
 password:1234
 ```
+### ER diagram of the project 
+![Upgrade_youself_ER](https://user-images.githubusercontent.com/67160398/153058665-a00eb640-d4cd-40a8-8068-c6fd4761aec5.png)
