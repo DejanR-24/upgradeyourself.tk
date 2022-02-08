@@ -15,6 +15,7 @@ Create a virtual environment to install dependencies in and activate it:
 ```
 $ python3.9 -m venv .venv
 $ source .venv/bin/activate
+```
 Then install the dependencies:
 ```
 (env)$ pip3 install -r requirements.txt
