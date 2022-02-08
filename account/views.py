@@ -1,6 +1,12 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import permissions
+from rest_framework import renderers
+from rest_framework.permissions import AllowAny
+
 from .serializers import ClientSerializer, EmployeeSerializer, PsychologistSerializer, UserSerializer
 from .models import Client, Employee, Psychologist
 
@@ -10,7 +16,15 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    #permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAdminUser]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            self.permission_classes = (AllowAny,)
+
+        return super(UserViewSet, self).get_permissions()
+
+
 
 class ClientViewSet(viewsets.ModelViewSet):
     """
