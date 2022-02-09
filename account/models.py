@@ -15,6 +15,8 @@ class Client(models.Model):
    gender= models.IntegerField(choices=GENDER_CHOICES, default=0)
 
 
+
+
 class Employee(models.Model):
    user = models.OneToOneField(User, unique = True, on_delete=models.CASCADE)
    phonenumber = models.CharField(max_length=10,verbose_name="phone number")
