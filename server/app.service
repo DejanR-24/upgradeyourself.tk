@@ -1,0 +1,15 @@
+[Unit]
+Description=uWSGI instance to serve upgradeyourself.tk project
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/var/www/upgradeyourself.tk/upgrade_yourself
+Environment="PATH=/var/www/upgradeyourself.tk/.venv/bin"
+ExecStart=/var/www/upgradeyourself.tk/.venv/bin/uwsgi --ini /var/www/upgradeyourself.tk/.venv/etc/uwsgi.ini
+KillSignal=SIGQUIT
+Type=notify
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

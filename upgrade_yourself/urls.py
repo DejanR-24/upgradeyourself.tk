@@ -8,7 +8,6 @@ from rest_framework_simplejwt.views import (
 
 from account import views as account_views
 
-
 router = routers.DefaultRouter()
 router.register(r'users', account_views.UserViewSet)
 router.register(r'clients', account_views.ClientViewSet)
