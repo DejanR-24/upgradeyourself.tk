@@ -21,6 +21,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             password = validated_data.pop('password')
             instance.set_password(password)
         return super(UserSerializer, self).update(instance, validated_data)
+    
+    def login(self,validated_data):
+        if User.objects.filter(username=validated_data['password']) is None:
+            raise 
 
 class ClientSerializer(serializers.HyperlinkedModelSerializer):
     user=UserSerializer()

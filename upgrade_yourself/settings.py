@@ -42,18 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
-    #'rest_framework_simplejwt',
-    #'rest_framework.authtoken',
-
-    # 'rest_framework.authtoken',
-    # 'rest_auth',
-    # 'django.contrib.sites',
-    # 'allauth',
-    #'allauth.account',
-    # 'rest_auth.registration',
-
+    "debug_toolbar",
+    'rest_framework_simplejwt',
 
     'account',
+
 ]
 
 MIDDLEWARE = [
@@ -64,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'upgrade_yourself.urls'
@@ -88,7 +83,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-    #    'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
@@ -114,7 +109,7 @@ DATABASES = {
 }
 
 INTERNAL_IPS = [
-    os.environ.get('DATABASE_HOST'),
+    "127.0.0.1",
 ]
 
 
