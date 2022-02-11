@@ -1,39 +1,26 @@
+from pydoc import cli
 from django.contrib.auth.models import User,Group
-from .models import GENDER_CHOICES, Client,Employee,Psychologist
+from .models import GENDER_CHOICES, Client, Employee, Psychologist
 from rest_framework import serializers
-
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = [ 'username', 'first_name','last_name','email']
-
-    # def get_permissions(self):
-    #     if self.request.method == 'POST':
-    #         self.permission_classes = (AllowAny,)
-    #     return super(UserViewSet, self).get_permissions()
-    
-    # def create(self, validated_data):
-    #     user = get_user_model().objects.create_user(**validated_data)
-    #     return user
-
-    # def update(self, instance, validated_data):
-    #     if 'password' in validated_data:
-    #         password = validated_data.pop('password')
-    #         instance.set_password(password)
-    #     return super(UserSerializer, self).update(instance, validated_data)
-
-# Register Serializer
-class RegisterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
-
+        fields = [ 'url','username','password','first_name','last_name','email']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            
+        }
     def create(self, validated_data):
-        user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
-
+        user = User.objects.create_user(**validated_data)
         return user
+    
+
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            password = validated_data.pop('password')
+            instance.set_password(password)
+        return super(UserSerializer, self).update(instance, validated_data)
 
 class ClientSerializer(serializers.HyperlinkedModelSerializer):
     user=UserSerializer()
@@ -41,13 +28,29 @@ class ClientSerializer(serializers.HyperlinkedModelSerializer):
         model = Client
         fields = ['id', 'user' ,'phonenumber','birthdate','gender']
 
-    def to_representation(self, obj):
-        """Move fields from user to user representation."""
-        representation = super().to_representation(obj)
-        user_representation = representation.pop('user')
-        for key in user_representation:
-            representation[key] = user_representation[key]
-        return representation
+    def create(self, validated_data):
+        
+        user_data=validated_data.pop('user')
+       
+        this_user=User.objects.create_user(**user_data)
+        phonenumber=""
+        if 'phonenumber' in validated_data:
+                phonenumber=validated_data.pop('phonenumber')
+        birthdate=""
+        if 'birthdate' in validated_data:
+                birthdate=validated_data.pop('birthdate')
+        gender=""
+        if 'gender' in validated_data:
+                gender=validated_data.pop('gender')
+        client_data={
+            "user": user_data,
+            "phonenumber": phonenumber,
+            "birthdate": birthdate,
+            "gender": gender
+        }
+        new_client=Client(user=this_user,phonenumber=client_data['phonenumber'],birthdate=client_data['birthdate'],gender=client_data['gender'])
+        new_client.save()
+        return new_client
 
 
 
@@ -56,27 +59,45 @@ class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Employee
         fields = ['id', 'user' ,'phonenumber','profile_picture']
+    
+    def create(self, validated_data):
+        user_data=validated_data.pop('user')
+        this_user=User.objects.create_user(**user_data)
+        phonenumber=""
+        if 'phonenumber' in validated_data:
+                phonenumber=validated_data.pop('phonenumber')
+        profile_picture=""
+        if 'profile_picture' in validated_data:
+                profile_picture=validated_data.pop('profile_picture')
+        employee_data={
+            "user": user_data,
+            "phonenumber": phonenumber,
+            "profile_picture": profile_picture
+        }
+        new_employee=Employee(user=this_user,phonenumber=employee_data['phonenumber'],profile_picture=employee_data['profile_picture'])
+        new_employee.save()
+        return new_employee
 
-    def to_representation(self, obj):
-        """Move fields from user to user representation."""
-        representation = super().to_representation(obj)
-        user_representation = representation.pop('user')
-        for key in user_representation:
-            representation[key] = user_representation[key]
-        return representation
 
 class PsychologistSerializer(serializers.HyperlinkedModelSerializer):
     employee=EmployeeSerializer()
     class Meta:
         model = Psychologist
         fields = ['id', 'employee' ,'bio']
-
-    def to_representation(self, obj):
-        """Move fields from employee to Psychologist representation."""
-        representation = super().to_representation(obj)
-        employee_representation = representation.pop('employee')
-        for key in employee_representation:
-            representation[key] = employee_representation[key]
-        return representation
+    
+    def create(self, validated_data):
+        employee_data=validated_data.pop('employee')
+        user_data=employee_data.pop('user')
+        this_user=User.objects.create_user(**user_data)
+        new_employee=Employee(user=this_user,phonenumber=employee_data['phonenumber'],profile_picture=employee_data['profile_picture'])
+        new_employee.save()
+        if 'bio' in validated_data:
+                bio=validated_data.pop('bio')
+        psychologist_data={
+            "bio": bio
+        }
+        new_psychologist=Psychologist(employee=new_employee,bio=psychologist_data['bio'])
+        new_psychologist.save()
+        return new_psychologist
 
 
