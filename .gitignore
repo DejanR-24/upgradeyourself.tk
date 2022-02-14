@@ -127,4 +127,3 @@ dmypy.json
 .pyre/
 
 # PostgreSQL shell commands
-postgreSQL.sql
