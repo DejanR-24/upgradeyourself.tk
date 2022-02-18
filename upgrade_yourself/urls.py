@@ -1,11 +1,8 @@
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from rest_framework_simplejwt.views import TokenRefreshView
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from django.contrib.auth import views as auth_views
 
 from account import views as account_views
 
@@ -20,11 +17,19 @@ router.register(r'psychologists', account_views.PsychologistViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
+    
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('login/', account_views.MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
+    path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('admin/', admin.site.urls),
-    #path('login/', account_views.MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
+
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.jwt')),
+    #path('activate/<str:uid>/<str:token>/', account_views.UserActivationView.as_view(),name="activate_email"),
+    path('activate/<uid>/<token>', account_views.ActivateUser.as_view({'get': 'activation'}), name='activation'),
+  
 ]
 
 import debug_toolbar

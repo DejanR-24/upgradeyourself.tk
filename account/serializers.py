@@ -28,14 +28,18 @@ class UserSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
+    is_staff=serializers.BooleanField(default=False)
+    is_superuser=serializers.BooleanField(default=False)
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name')
+        fields = ('id','username', 'password', 'password2', 'email', 'first_name', 'last_name','is_staff','is_superuser')
         extra_kwargs = {
             'first_name': {'required': True},
-            'last_name': {'required': True}
+            'last_name': {'required': True},
+            'id': {'read_only': True},
         }
+
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
@@ -48,7 +52,9 @@ class UserSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             email=validated_data['email'],
             first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
+            last_name=validated_data['last_name'],
+            is_staff=validated_data['is_staff'],
+            is_superuser=validated_data['is_superuser']
         )
         user.set_password(validated_data['password'])
         user.save()
@@ -67,7 +73,9 @@ class ClientSerializer(serializers.ModelSerializer):
             username=user_data['username'],
             email=user_data['email'],
             first_name=user_data['first_name'],
-            last_name=user_data['last_name']
+            last_name=user_data['last_name'],
+            is_staff=False,
+            is_superuser=False
         )
         this_user.set_password(user_data['password'])
         this_user.save()
@@ -87,7 +95,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
             username=user_data['username'],
             email=user_data['email'],
             first_name=user_data['first_name'],
-            last_name=user_data['last_name']
+            last_name=user_data['last_name'],
+            is_staff=True,
+            is_superuser=False
         )
         this_user.set_password(user_data['password'])
         this_user.save()
@@ -107,7 +117,9 @@ class PsychologistSerializer(serializers.ModelSerializer):
             username=user_data['username'],
             email=user_data['email'],
             first_name=user_data['first_name'],
-            last_name=user_data['last_name']
+            last_name=user_data['last_name'],
+            is_staff=True,
+            is_superuser=True
         )
         this_user.set_password(user_data['password'])
         this_user.save()

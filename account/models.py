@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+
 # Create your models here.
 
 GENDER_CHOICES = (
@@ -39,3 +40,5 @@ class Employee(models.Model):
 class Psychologist(models.Model):
    employee = models.OneToOneField(Employee,unique=True, on_delete=models.CASCADE)
    bio = models.TextField(max_length=1500)
+
+

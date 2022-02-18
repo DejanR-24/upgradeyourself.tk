@@ -102,7 +102,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-
+.env
 .venv
 env/
 venv/
@@ -127,3 +127,7 @@ dmypy.json
 .pyre/
 
 # PostgreSQL shell commands
+postgreSQL.sql
+
+#i think i will not use this
+redis-6.2.6
