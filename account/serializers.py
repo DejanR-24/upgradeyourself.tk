@@ -47,7 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         return attrs
 
-    def create(self, validated_data):
+    def create(self,validated_data):
         user = User.objects.create(
             username=validated_data['username'],
             email=validated_data['email'],
@@ -65,7 +65,10 @@ class ClientSerializer(serializers.ModelSerializer):
     gender= serializers.IntegerField(default=0)
     class Meta:
         model = Client
-        fields = ('user', 'phonenumber','birthdate','gender')
+        fields = ('user', 'phonenumber','birthdate','gender','is_verified')
+        extra_kwargs = {
+            'is_verified': {'read_only': True}
+        }
 
     def create(self, validated_data):
         user_data=validated_data.pop('user')
@@ -79,7 +82,7 @@ class ClientSerializer(serializers.ModelSerializer):
         )
         this_user.set_password(user_data['password'])
         this_user.save()
-        new_client=Client(user=this_user,phonenumber=validated_data['phonenumber'],birthdate=validated_data['birthdate'],gender=validated_data['gender'])
+        new_client=Client(user=this_user,phonenumber=validated_data['phonenumber'],birthdate=validated_data['birthdate'],gender=validated_data['gender'],is_verified=False)
         new_client.save()
         return new_client
 

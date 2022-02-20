@@ -15,7 +15,6 @@ django-templated-mail==1.1.1
 django-upgrade==1.4.0
 djangorestframework==3.13.1
 djangorestframework-simplejwt==4.8.0
-djoser==2.1.0
 filter==0.0.0.20200724
 httpie==3.0.2
 idna==3.3

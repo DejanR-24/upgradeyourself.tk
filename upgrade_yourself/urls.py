@@ -19,16 +19,16 @@ urlpatterns = [
     path('', include(router.urls)),
     
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('register/', account_views.RegisterView.as_view(),name='register'),
+    path('email_verify/', account_views.VerifyEmailView.as_view(),name='email-verify'),
     path('login/', account_views.MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
-    path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+ 
+
     path('admin/', admin.site.urls),
 
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.jwt')),
-    #path('activate/<str:uid>/<str:token>/', account_views.UserActivationView.as_view(),name="activate_email"),
-    path('activate/<uid>/<token>', account_views.ActivateUser.as_view({'get': 'activation'}), name='activation'),
   
 ]
 
@@ -36,3 +36,4 @@ import debug_toolbar
 urlpatterns = [
     path('__debug__/', include(debug_toolbar.urls)),
 ] + urlpatterns
+

@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     "debug_toolbar",
     'rest_framework_simplejwt',
-    'djoser',
+    #'djoser',
 
     'account',
  
@@ -174,7 +174,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
@@ -214,19 +214,19 @@ EMAIL_PORT=587
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
-DJOSER = {
-    'SEND_ACTIVATION_EMAIL': True,
-    'SET_USERNAME_RETYPE':True,
-    'SET_PASSWORD_RETYPE':True,
-    'USERNAME_CHANGED_EMAIL_CONFIRMATION':True,
-    'PASSWORD_CHANGED_EMAIL_CONFIRMATION':True,
-    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': 'activate/{uid}/{token}',
+# DJOSER = {
+#     'SEND_ACTIVATION_EMAIL': True,
+#     'SET_USERNAME_RETYPE':True,
+#     'SET_PASSWORD_RETYPE':True,
+#     'USERNAME_CHANGED_EMAIL_CONFIRMATION':True,
+#     'PASSWORD_CHANGED_EMAIL_CONFIRMATION':True,
+#     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+#     'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
+#     'ACTIVATION_URL': 'activate/{uid}/{token}',
 
-    'SERIALIZERS': {
-        'user_create': 'account.serializers.UserSerializer',
-        'user': 'account.serializers.UserSerializer',
-        'user_delete': 'djoser.serializers.UserDeleteSerializer',
-    },
-}
+#     'SERIALIZERS': {
+#         'user_create': 'account.serializers.UserSerializer',
+#         'user': 'account.serializers.UserSerializer',
+#         'user_delete': 'account.serializers.UserSerializer',
+#     },
+# }

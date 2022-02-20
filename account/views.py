@@ -1,21 +1,71 @@
-from django.contrib.auth.models import User
+from ssl import RAND_status
 from django.conf import settings
-from rest_framework import viewsets, mixins,permissions, status
+from django.urls import reverse
+from django.contrib.auth.models import User
+from django.contrib.sites.shortcuts import get_current_site
+from rest_framework import viewsets, mixins,permissions, status, generics
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 import requests
-from djoser.views import UserViewSet
+import jwt
 
 
 from .serializers import MyTokenObtainPairSerializer, UserSerializer, ClientSerializer, EmployeeSerializer, PsychologistSerializer
 from .models import Client, Employee, Psychologist
+from .utils import Util
 
 # CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 class MyObtainTokenPairView(TokenObtainPairView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
+
+
+class RegisterView(generics.GenericAPIView):
+    queryset = Client.objects.all()
+    serializer_class= ClientSerializer
+    permission_classes=[permissions.AllowAny,]
+
+    def post(self, request):
+        client = request.data
+        serializer = self.serializer_class(data=client)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        client_data = serializer.data
+        client_user = User.objects.get(email=client['user']['email'])
+        token=RefreshToken.for_user(client_user).access_token
+        current_site=get_current_site(request).domain
+        relativeLink=reverse('email-verify')
+        absurl='http://'+current_site+relativeLink+"?token="+str(token)
+        email_body='Hi ' + client['user']['first_name'] + ', use link below to verify your email \n'+ absurl + '\n\n Have a good day,\n UpgradeYourself Team'
+        send_to=client['user']['email']
+        data={'email_body':email_body,'send_to':send_to,'email_subject':'Verify your email'}
+        Util.send_email(data)
+
+        return Response(client_data, status=status.HTTP_201_CREATED)
+
+
+
+class VerifyEmailView(generics.GenericAPIView):
+    queryset = Client.objects.all()
+    serializer_class= ClientSerializer
+
+    def get(self,request):
+        token=request.GET.get('token')
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            user = User.objects.get(id=payload['user_id'])
+            client = Client.objects.get(user=user)
+            if not client.is_verified:
+                client.is_verified=True
+                client.save()
+            return Response({'email':'Successfully activated'}, status=status.HTTP_200_OK)
+        except jwt.ExpiredSignatureError as indentifier:
+            return Response({'error':'Activation Expired'},status=status.HTTP_400_BAD_REQUEST)
+        except jwt.exceptions.DecodeError as indentifier:
+            return Response({'error':'Invalid token'},status=status.HTTP_400_BAD_REQUEST)
 
 class UserViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, 
                     mixins.RetrieveModelMixin, mixins.UpdateModelMixin, 
@@ -100,17 +150,6 @@ class PsychologistViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
         return super(PsychologistViewSet, self).get_permissions()
 
 
- 
-class ActivateUser(UserViewSet):
-    def get_serializer(self, *args, **kwargs):
-        serializer_class = self.get_serializer_class()
-        kwargs.setdefault('context', self.get_serializer_context())
- 
-        # this line is the only change from the base implementation.
-        kwargs['data'] = {"uid": self.kwargs['uid'], "token": self.kwargs['token']}
- 
-        return serializer_class(*args, **kwargs)
- 
-    def activation(self, request, uid, token, *args, **kwargs):
-        super().activation(request, *args, **kwargs)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+        

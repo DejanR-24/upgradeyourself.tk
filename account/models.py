@@ -2,9 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-
-# Create your models here.
-
 GENDER_CHOICES = (
     (0, 'not specified'),
     (1, 'male'),
@@ -16,20 +13,16 @@ class Client(models.Model):
     phonenumber = models.CharField(max_length=10,verbose_name="phone number")
     birthdate = models.DateField(verbose_name="birth date")
     gender= models.IntegerField(choices=GENDER_CHOICES, default=0)
+    is_verified = models.BooleanField(default=False)
 
-    # def create_client(self, user, phonenumber, birthdate, gender):
-    #     """
-    #     Create and save a user with the given username, email, and password.
-    #     """
-    #     if not user:
-    #         raise ValueError('The given user must be set')
-    #     self.phonenumber=phonenumber
-    #     birthdate=birthdate
-    #     gender=gender
-    #     client = Client(username=username, email=email, **extra_fields)
-    #     client.save(using=self._db)
-    #     return client
+    def get_email(self):
+        return self.user.email
 
+    def get_user_id(self):
+        return self.user.id
+
+    def last_login(self):
+        return self.user.last_login
 
 
 class Employee(models.Model):
