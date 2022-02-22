@@ -52,7 +52,7 @@ INSTALLED_APPS = [
 
 
     'account',
- 
+    'my_auth',
 
 ]
 

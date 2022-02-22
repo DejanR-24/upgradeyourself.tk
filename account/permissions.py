@@ -9,3 +9,4 @@ class IsClientProfileOwner(permissions.BasePermission):
     # for object level permissions
     def has_object_permission(self, request, view, obj):
         return obj.user.id == request.user.id and obj.is_verified==True
+
