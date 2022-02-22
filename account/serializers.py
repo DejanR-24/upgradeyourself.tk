@@ -1,9 +1,12 @@
+from xml.sax.xmlreader import AttributesImpl
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from account.models import Client, Employee, Psychologist
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
+from .models import Client, Employee, Psychologist
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -65,9 +68,9 @@ class ClientSerializer(serializers.ModelSerializer):
     gender= serializers.IntegerField(default=0)
     class Meta:
         model = Client
-        fields = ('user', 'phonenumber','birthdate','gender','is_verified')
+        fields = ('id','user', 'phonenumber','birthdate','gender','is_verified')
         extra_kwargs = {
-            'is_verified': {'read_only': True}
+            'is_verified': {'read_only': True},
         }
 
     def create(self, validated_data):
@@ -85,6 +88,7 @@ class ClientSerializer(serializers.ModelSerializer):
         new_client=Client(user=this_user,phonenumber=validated_data['phonenumber'],birthdate=validated_data['birthdate'],gender=validated_data['gender'],is_verified=False)
         new_client.save()
         return new_client
+
 
 class EmployeeSerializer(serializers.ModelSerializer):
     user=UserSerializer()
@@ -131,3 +135,48 @@ class PsychologistSerializer(serializers.ModelSerializer):
         new_psychologist=Psychologist(employee=new_employee,bio=validated_data['bio'])
         new_psychologist.save()
         return new_psychologist
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+    def validate(self,attrs):
+        self.token = attrs['refresh']
+        return attrs
+
+    def save(self,**kwags):
+        try:
+             RefreshToken(self.token).blacklist()
+        except TokenError:
+            self.fail('bad token')
+ 
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id','username', 'email', 'first_name', 'last_name')
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'username': {'read_only': True},
+            'email': {'read_only': True}
+        }
+
+class ClientProfileSerializer(serializers.ModelSerializer):
+    user=UpdateUserSerializer()
+    gender= serializers.IntegerField(default=0)
+    class Meta:
+        model = Client
+        fields = ('id','user', 'phonenumber','birthdate','gender','is_verified')
+        extra_kwargs = {
+            'is_verified': {'read_only': True},
+        }
+
+    def update(self, instance, validated_data):
+        user_data = validated_data['user']
+        user = User.objects.get(id=instance.user.id)
+        user.first_name = user_data.get('first_name', user.first_name)
+        user.last_name = user_data.get('last_name', user.last_name)
+        user.save()
+        instance.phonenumber = validated_data.get('phonenumber', instance.phonenumber)
+        instance.birthdate = validated_data.get('birthdate', instance.birthdate)
+        instance.save()
+        return instance
+
