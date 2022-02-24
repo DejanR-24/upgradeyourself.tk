@@ -1,26 +1,9 @@
-from xml.sax.xmlreader import AttributesImpl
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 from .models import Client, Employee, Psychologist
-
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-
-    @classmethod
-    def get_token(cls, user):
-        token = super(MyTokenObtainPairSerializer, cls).get_token(user)
-
-        # Add custom claims
-        token['username'] = user.username
-        return token
-
-
-
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -28,7 +11,6 @@ class UserSerializer(serializers.ModelSerializer):
             required=True,
             validators=[UniqueValidator(queryset=User.objects.all())]
             )
-
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
     is_staff=serializers.BooleanField(default=False)
@@ -43,11 +25,9 @@ class UserSerializer(serializers.ModelSerializer):
             'id': {'read_only': True},
         }
 
-
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
-
         return attrs
 
     def create(self,validated_data):
@@ -62,6 +42,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
 
 class ClientSerializer(serializers.ModelSerializer):
     user=UserSerializer()
@@ -112,6 +93,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         new_employee.save()
         return new_employee
 
+
 class PsychologistSerializer(serializers.ModelSerializer):
     employee=EmployeeSerializer()
     class Meta:
@@ -136,18 +118,6 @@ class PsychologistSerializer(serializers.ModelSerializer):
         new_psychologist.save()
         return new_psychologist
 
-class LogoutSerializer(serializers.Serializer):
-    refresh = serializers.CharField()
-
-    def validate(self,attrs):
-        self.token = attrs['refresh']
-        return attrs
-
-    def save(self,**kwags):
-        try:
-             RefreshToken(self.token).blacklist()
-        except TokenError:
-            self.fail('bad token')
  
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -180,3 +150,42 @@ class ClientProfileSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
+class EmployeeProfileSerializer(serializers.ModelSerializer):
+    user=UpdateUserSerializer()
+    class Meta:
+        model = Employee
+        fields = ('id','user', 'phonenumber','profile_picture')
+
+    def update(self, instance, validated_data):
+        user_data = validated_data['user']
+        user = User.objects.get(id=instance.user.id)
+        user.first_name = user_data.get('first_name', user.first_name)
+        user.last_name = user_data.get('last_name', user.last_name)
+        user.save()
+        instance.phonenumber = validated_data.get('phonenumber', instance.phonenumber)
+        instance.profile_picture = validated_data.get('profile_picture', instance.profile_picture)
+        instance.save()
+        return instance
+
+
+class PsychologistProfileSerializer(serializers.ModelSerializer):
+    employee=EmployeeProfileSerializer()
+    class Meta:
+        model = Psychologist
+        fields = ('id','employee','bio')
+
+    def update(self, instance, validated_data):
+        user_data = validated_data['employee']['user']
+        user = User.objects.get(id=instance.employee.user.id)
+        user.first_name = user_data.get('first_name', user.first_name)
+        user.last_name = user_data.get('last_name', user.last_name)
+        user.save()
+        employee_data = validated_data['employee']
+        employee = Employee.objects.get(id=instance.employee.id)
+        employee.phonenumber = employee_data.get('phonenumber', employee.phonenumber)
+        employee.profile_picture = employee_data.get('profile_picture', employee.profile_picture)
+        employee.save()
+        instance.bio = validated_data.get('bio', instance.bio)
+        instance.save()
+        return instance

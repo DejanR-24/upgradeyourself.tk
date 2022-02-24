@@ -5,20 +5,26 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.contrib.auth import views as auth_views
 
 from account import views as account_views
+from scheduler import views as scheduler_views
 
 router = routers.DefaultRouter()
 router.register(r'users', account_views.UserViewSet)
-#router.register(r'clients', account_views.ClientViewSet)
-router.register(r'client',account_views.ClientProfileViewSet,basename='client')
+router.register(r'clients', account_views.ClientViewSet)
+router.register(r'client-profile',account_views.ClientProfileViewSet,basename='client-profile')
 router.register(r'employees', account_views.EmployeeViewSet)
+router.register(r'employee-profile',account_views.EmployeeProfileViewSet,basename='employee-profile')
 router.register(r'psychologists', account_views.PsychologistViewSet)
-
-
+router.register(r'psychologist-profile',account_views.PsychologistProfileViewSet,basename='psychologist-profile')
+router.register(r'schedule', scheduler_views.ScheduleViewSet)
+router.register(r'therapy', scheduler_views.TherapyViewSet)
+router.register(r"psichologist's-therapies",scheduler_views.PsychologistsTherapiesViewSet,basename="psychologist's-therapies")
+router.register(r"psichologist's-clients",scheduler_views.PsychologistsClientsViewSet,basename="psychologist's-clients")
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
     path('',include('my_auth.urls')),
+    path('',include('scheduler.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     
     path('admin/', admin.site.urls), 
@@ -32,12 +38,7 @@ urlpatterns = [
 
 #in progress
 urlpatterns = [
-
-    # path('register/', account_views.RegisterView.as_view(),name='register'),
-    # path('email_verify/', account_views.VerifyEmailView.as_view(),name='email-verify'),
-    # path('login/', account_views.MyObtainTokenPairView.as_view(), name='login'),
-    # path('logout/', account_views.LogoutAPIView.as_view(), name='logout'),
-    # path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    # path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    
 
 ] + urlpatterns
+
