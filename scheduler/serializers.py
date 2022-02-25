@@ -1,7 +1,7 @@
 from rest_framework import serializers,mixins
 from django.contrib.auth.models import User
 
-from .models import Schedule, Therapy
+from .models import Fullcalendar, Schedule, Therapy
 from account.models import Client, Psychologist
 
 class ScheduleSerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class TherapySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Therapy
-        fields = ('date','shedule_id','psychologist_id','client_id')
+        fields = ('date','schedule_id','psychologist_id','client_id')
 
 
 
@@ -45,3 +45,8 @@ class PsychologistsClientsSerializer(FlattenMixin, serializers.HyperlinkedModelS
 #     class Meta:
 #         model = Album
 #         fields = ['album_name', 'artist', 'tracks']
+
+class FullcalendarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fullcalendar
+        fields = ('title','start','end')
