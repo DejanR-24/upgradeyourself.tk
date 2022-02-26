@@ -67,6 +67,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+
+    "my_auth.middleware.CORSMiddleware",
 ]
 
 ROOT_URLCONF = 'upgrade_yourself.urls'
