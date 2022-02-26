@@ -66,10 +66,10 @@ class EmployeeProfileViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin,
         return Employee.objects.filter(user=self.request.user)
 
 # @cache_page(CACHE_TTL)
-class PsychologistViewSet(mixins.ListModelMixin, 
+class PsychologistViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, 
                     viewsets.GenericViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    API endpoint that allows users to see Psychologists.
     """
     queryset = Psychologist.objects.all()
     serializer_class = PsychologistSerializer
