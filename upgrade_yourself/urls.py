@@ -8,23 +8,27 @@ from account import views as account_views
 from scheduler import views as scheduler_views
 
 router = routers.DefaultRouter()
-router.register(r'users', account_views.UserViewSet)
-router.register(r'clients', account_views.ClientViewSet)
-router.register(r'client-profile',account_views.ClientProfileViewSet,basename='client-profile')
-router.register(r'employees', account_views.EmployeeViewSet)
-router.register(r'employee-profile',account_views.EmployeeProfileViewSet,basename='employee-profile')
-router.register(r'psychologists', account_views.PsychologistViewSet)
+router.register(r'users', account_views.UserViewSet) #only SuperAdmin
+router.register(r'clients', account_views.ClientViewSet) #onlySuperAdmin
+router.register(r'client-profile',account_views.ClientProfileViewSet,basename='client-profile') #profile-owner
+router.register(r'employees', account_views.EmployeeViewSet) #superAdmin
+router.register(r'employee-profile',account_views.EmployeeProfileViewSet,basename='employee-profile') #profile-owner
+router.register(r'psychologists', account_views.PsychologistViewSet) 
 router.register(r'psychologist-profile',account_views.PsychologistProfileViewSet,basename='psychologist-profile')
-router.register(r'schedule', scheduler_views.ScheduleViewSet)
-router.register(r'therapy', scheduler_views.TherapyViewSet)
-router.register(r"psychologist's-therapies",scheduler_views.PsychologistsTherapiesViewSet,basename="psychologist's-therapies")
+router.register(r'working-hours', scheduler_views.WorkingHoursViewSet)
 
-router.register(r"psychologist's-schedule",scheduler_views.ClientViewPsychologistsTherapiesViewSet,basename="psychologist's-schedule")
+router.register(r'therapy', scheduler_views.TherapyViewSet) 
 
+router.register(r'schedule-therapy', scheduler_views.ScheduleTherapyViewSet) #client schedules therapy
+
+router.register(r"psychologists/therapies/confirmed",scheduler_views.PsychologistsTherapiesConfirmedViewSet,basename="psychologists/therapies/confirmed")
+router.register(r"psychologists/therapies/pending",scheduler_views.PsychologistsTherapiesPendingViewSet,basename="psychologists/therapies/pending")
+
+router.register(r"psychologists/schedule",scheduler_views.ClientViewPsychologistsTherapiesViewSet,basename="psychologists/schedule")
 router.register(r"client-goes-to",scheduler_views.GoesToViewSet,basename="client-goes-to")
 
-router.register(r"psychologist's-fullcalendar",scheduler_views.PsychologistsFullcalendarViewSet,basename="psychologist's-fullcalendar")
-router.register(r"psychologist's-clients",scheduler_views.PsychologistsClientsViewSet,basename="psychologist's-clients")
+router.register(r"psychologists-fullcalendar",scheduler_views.PsychologistsFullcalendarViewSet,basename="psychologists-fullcalendar")
+router.register(r"psychologists-clients",scheduler_views.PsychologistsClientsViewSet,basename="psychologists-clients")
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [

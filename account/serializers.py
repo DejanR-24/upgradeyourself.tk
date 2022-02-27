@@ -94,11 +94,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return new_employee
 
 
-class PsychologistSerializer(serializers.ModelSerializer):
+class PsychologistSerializer(serializers.HyperlinkedModelSerializer):
     employee=EmployeeSerializer()
     class Meta:
         model = Psychologist
-        fields = ('employee', 'bio')
+        fields = ('id', 'employee', 'bio')
 
     def create(self, validated_data):
         user_data=validated_data['employee'].pop('user')
