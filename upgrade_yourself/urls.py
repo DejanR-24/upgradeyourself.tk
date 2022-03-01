@@ -24,13 +24,13 @@ router.register(r'schedule-therapy', scheduler_views.ScheduleTherapyViewSet) #cl
 router.register(r"psychologists/therapies/confirmed",scheduler_views.PsychologistsTherapiesConfirmedViewSet,basename="psychologists/therapies/confirmed")
 router.register(r"psychologists/therapies/pending",scheduler_views.PsychologistsTherapiesPendingViewSet,basename="psychologists/therapies/pending")
 
-router.register(r"psychologists/schedule",scheduler_views.ClientViewPsychologistsTherapiesViewSet,basename="psychologists/schedule")
+router.register(r"psychologists-schedule",scheduler_views.ClientViewPsychologistsTherapiesViewSet,basename="psychologists-schedule")
 router.register(r"client-goes-to",scheduler_views.GoesToViewSet,basename="client-goes-to")
 
 router.register(r"psychologists-fullcalendar",scheduler_views.PsychologistsFullcalendarViewSet,basename="psychologists-fullcalendar")
 router.register(r"psychologists-clients",scheduler_views.PsychologistsClientsViewSet,basename="psychologists-clients")
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
+
+
 urlpatterns = [
     path('', include(router.urls)),
     path('',include('my_auth.urls')),

@@ -6,9 +6,9 @@ from django.contrib.auth.models import User
 from account.models import Psychologist,Employee,Client
 from account.serializers import ClientSerializer
 from account.permissions import IsSuperAdmin
-from .models import GoesTo, WorkingHours, Therapy, Fullcalendar
-from .serializers import FullcalendarSerializer, TherapyCreateSerializer ,PsychologistsClientsSerializer, WorkingHoursSerializer, TherapySerializer, GoesToSerializer
-from .permissions import IsPsychologistTherapyOwner
+from .models import GoesTo, WorkingHours, Therapy
+from .serializers import  *
+from .permissions import IsClientTherapyOwner, IsPsychologistTherapyOwner
 
 
 class WorkingHoursViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, 
@@ -58,10 +58,10 @@ class PsychologistsTherapiesConfirmedViewSet(mixins.ListModelMixin,mixins.Retrie
     API endpoint that allows psychologist to see their scheduled therapies.
     """
     serializer_class = TherapySerializer
-    permision_classes = [IsPsychologistTherapyOwner]
+    permission_classes = [IsPsychologistTherapyOwner]
 
     def get_queryset(self):
-        return Therapy.objects.filter(psychologist_id=Psychologist.objects.get(employee=Employee.objects.get(user=self.request.user)).id,confirmation_id=2,date__gte = datetime.date.today(),date__lte = datetime.date.today() + datetime.timedelta(days=7)).order_by('date')
+        return Therapy.objects.filter(psychologist=Psychologist.objects.get(employee=Employee.objects.get(user=self.request.user)),confirmation__id=2,date__gte = datetime.date.today(),date__lte = datetime.date.today() + datetime.timedelta(days=7)).order_by('date')
 
 
 class PsychologistsTherapiesPendingViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
@@ -69,20 +69,20 @@ class PsychologistsTherapiesPendingViewSet(mixins.ListModelMixin,mixins.Retrieve
     API endpoint that allows psychologist to see pending requests for therapies from clients.
     """
     serializer_class = TherapySerializer
-    permision_classes = [IsPsychologistTherapyOwner]
+    permission_classes = [IsPsychologistTherapyOwner]
 
     def get_queryset(self):
-        return Therapy.objects.filter(psychologist_id=Psychologist.objects.get(employee=Employee.objects.get(user=self.request.user)).id,confirmation_id=1)
+        return Therapy.objects.filter(psychologist=Psychologist.objects.get(employee=Employee.objects.get(user=self.request.user)),confirmation__id=1)
 
 class ClientViewPsychologistsTherapiesViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
     """
     API endpoint that allows clients to see schedule of their chosen psychologists.
     """
     serializer_class = TherapySerializer
-    permision_classes = [permissions.IsAuthenticated,]
+    permission_classes = [IsClientTherapyOwner]
 
     def get_queryset(self):
-        return Therapy.objects.filter(psychologist_id=GoesTo.objects.get(client=Client.objects.get(user=self.request.user)).psychologist_id,confirmation_id=2)
+        return Therapy.objects.filter(psychologist=GoesTo.objects.get(client=Client.objects.get(user=self.request.user)).psychologist)
 
 
 class PsychologistsFullcalendarViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
@@ -90,10 +90,10 @@ class PsychologistsFullcalendarViewSet(mixins.ListModelMixin,viewsets.GenericVie
     API endpoint that converts result of confirmed therpies of the client's psychologist to fullcalendar format so that we can use their plugin.
     """
     serializer_class = FullcalendarSerializer
-    permision_classes = [IsPsychologistTherapyOwner]
+    permission_classes = [IsClientTherapyOwner]
 
     def get_queryset(self):
-        return Fullcalendar.objects.filter(psychologist_id=GoesTo.objects.get(client_id=Client.objects.get(user=self.request.user)).psychologist_id,confirmation_id=2,date__gte = datetime.date.today(),date__lte =datetime.date.today() + datetime.timedelta(days=7))
+        return Therapy.objects.filter(psychologist=GoesTo.objects.get(client=Client.objects.get(user=self.request.user)).psychologist,confirmation=2)
 
 
 class PsychologistsClientsViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
@@ -101,9 +101,9 @@ class PsychologistsClientsViewSet(mixins.ListModelMixin,viewsets.GenericViewSet)
     API endpoint that allows psychologist to see list of their clients.
     """
     serializer_class = ClientSerializer
-    permision_classes = [IsPsychologistTherapyOwner]
+    permission_classes = [IsPsychologistTherapyOwner]
 
     def get_queryset(self):
-        return Client.objects.filter(goesto__client__isnull=False, goesto__psychologist_id = Psychologist.objects.get(employee=Employee.objects.get(user=self.request.user)).id) 
+        return Client.objects.filter(goesto__client__isnull=False, goesto__psychologist = Psychologist.objects.get(employee=Employee.objects.get(user=self.request.user))) 
         
 

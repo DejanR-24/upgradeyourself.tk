@@ -68,7 +68,7 @@ MIDDLEWARE = [
 
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 
-    "my_auth.middleware.CORSMiddleware",
+    "upgrade_yourself.middleware.CORSMiddleware",
 ]
 
 ROOT_URLCONF = 'upgrade_yourself.urls'

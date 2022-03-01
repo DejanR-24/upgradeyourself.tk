@@ -4,7 +4,7 @@ from re import I
 from rest_framework import serializers,mixins
 from django.contrib.auth.models import User
 
-from .models import Fullcalendar, ConfirmationStatus, WorkingHours, Therapy, GoesTo
+from .models import  ConfirmationStatus, WorkingHours, Therapy, GoesTo#,Fullcalendar
 from account.models import Client, Psychologist
 
 class WorkingHoursSerializer(serializers.ModelSerializer):
@@ -30,11 +30,11 @@ class TherapyCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         date=validated_data['date']
-        client_id = Client.objects.get(user=self.context['request'].user)
-        psychologist_id = GoesTo.objects.get(client = Client.objects.get(user=self.context['request'].user)).psychologist_id
-        workinghours_id = WorkingHours.objects.get(time=validated_data['time'])
-        confirmation_id = ConfirmationStatus.objects.get(id=1)
-        new_therapy=Therapy.objects.create(date=date,client_id=client_id,psychologist_id=psychologist_id,workinghours_id=workinghours_id,confirmation_id=confirmation_id)
+        client = Client.objects.get(user=self.context['request'].user).id
+        psychologist = GoesTo.objects.get(client = Client.objects.get(user=self.context['request'].user).id).psychologist
+        workinghours = WorkingHours.objects.get(time=validated_data['time'])
+        confirmation = ConfirmationStatus.objects.get(id=1).id
+        new_therapy=Therapy.objects.create(date=date,client=client,psychologist=psychologist,workinghours=workinghours,confirmation=confirmation)
         new_therapy.save()
         return new_therapy
 
@@ -43,15 +43,21 @@ class TherapySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Therapy
-        fields = ('date','workinghours_id','psychologist_id','client_id','confirmation_id')
+        fields = ('id','date','workinghours','psychologist','client','confirmation','title','start','end')
+        extra_kwargs = {
+            'title': {'read_only': True},
+            'start': {'read_only': True},
+            'end': {'read_only': True}
+        }
+
 
     # def create(self, validated_data):
     #     date=validated_data['date']
-    #     client_id = Client.objects.get(user=self.context['request'].user).id
-    #     psychologist_id = GoesTo.objects.get(client = Client.objects.get(user=self.context['request'].user)).psychologist_id
-    #     workinghours_id = WorkingHours.objects.get(time=validated_data['time']).id
-    #     confirmation_id = 1
-    #     new_therapy=Therapy(date=date,client_id=client_id,psychologist_id=psychologist_id,workinghours_id=workinghours_id,confirmation_id=confirmation_id)
+    #     client = Client.objects.get(user=self.context['request'].user).id
+    #     psychologist = GoesTo.objects.get(client = Client.objects.get(user=self.context['request'].user)).psychologist
+    #     workinghours = WorkingHours.objects.get(time=validated_data['time']).id
+    #     confirmation = 1
+    #     new_therapy=Therapy(date=date,client=client,psychologist=psychologist,workinghours=workinghours,confirmation=confirmation)
     #     new_therapy.save()
     #     return new_therapy
 
@@ -72,14 +78,14 @@ class PsychologistsClientsSerializer(FlattenMixin, serializers.HyperlinkedModelS
 
 class FullcalendarSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Fullcalendar
+        model = Therapy
         fields = ('title','start','end')
 
 
 class GoesToSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoesTo
-        fields = ('client','psychologist_id')
+        fields = ('client','psychologist')
         extra_kwargs = {
             'client': {'read_only': True}
         }
@@ -88,12 +94,12 @@ class GoesToSerializer(serializers.ModelSerializer):
         client = Client.objects.get(user=self.context['request'].user)
         goes_to = GoesTo.objects.create(
             client = client,
-            psychologist_id=validated_data['psychologist_id']
+            psychologist=validated_data['psychologist']
         )
         goes_to.save()
         return goes_to
 
     def update(self, instance, validated_data):
-        instance.psychologist_id=validated_data.get('psychologist_id', instance.psychologist_id)
+        instance.psychologist=validated_data.get('psychologist', instance.psychologist)
         instance.save()
         return instance

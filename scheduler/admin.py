@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import GoesTo,ConfirmationStatus, WorkingHours,Therapy, Fullcalendar
+from .models import GoesTo,ConfirmationStatus, WorkingHours,Therapy #Fullcalendar
 
 class WorkingHoursAdmin(admin.ModelAdmin):
         list_display=('id','time')
@@ -8,17 +8,17 @@ class WorkingHoursAdmin(admin.ModelAdmin):
 class ConfirmationStatusAdmin(admin.ModelAdmin):
         list_display=('id','status')
 
-class FullcalendarAdmin(admin.ModelAdmin):
-        list_display=('title','start','end','psychologist_id')
+# class FullcalendarAdmin(admin.ModelAdmin):
+#         list_display=('title','start','end','psychologist_id')
 
 class TherapyAdmin(admin.ModelAdmin):
-        list_display=('date','workinghours_id','psychologist_id','client_id')
+        list_display=('date','workinghours','psychologist','client_id')
 
 class GoesToAdmin(admin.ModelAdmin):
-        list_display=('client','psychologist_id')
+        list_display=('client_id','psychologist')
 
 admin.site.register(WorkingHours,WorkingHoursAdmin)
 admin.site.register(ConfirmationStatus,ConfirmationStatusAdmin)
-admin.site.register(Fullcalendar,FullcalendarAdmin)
+#admin.site.register(Fullcalendar,FullcalendarAdmin)
 admin.site.register(Therapy,TherapyAdmin)
 admin.site.register(GoesTo,GoesToAdmin)
