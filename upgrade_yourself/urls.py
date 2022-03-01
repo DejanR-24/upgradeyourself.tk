@@ -10,26 +10,23 @@ from scheduler import views as scheduler_views
 router = routers.DefaultRouter()
 router.register(r'users', account_views.UserViewSet) #only SuperAdmin
 router.register(r'clients', account_views.ClientViewSet) #onlySuperAdmin
-router.register(r'client-profile',account_views.ClientProfileViewSet,basename='client-profile') #profile-owner
 router.register(r'employees', account_views.EmployeeViewSet) #superAdmin
-router.register(r'employee-profile',account_views.EmployeeProfileViewSet,basename='employee-profile') #profile-owner
-router.register(r'psychologists', account_views.PsychologistViewSet) 
-router.register(r'psychologist-profile',account_views.PsychologistProfileViewSet,basename='psychologist-profile')
+router.register(r'therapy', scheduler_views.TherapyViewSet) 
 router.register(r'working-hours', scheduler_views.WorkingHoursViewSet)
 
-router.register(r'therapy', scheduler_views.TherapyViewSet) 
 
-router.register(r'schedule-therapy', scheduler_views.ScheduleTherapyViewSet) #client schedules therapy
+router.register(r'client-profile',account_views.ClientProfileViewSet,basename='client-profile') #profile-owner
+router.register(r'employee-profile',account_views.EmployeeProfileViewSet,basename='employee-profile') #profile-owner
+router.register(r'psychologist-profile',account_views.PsychologistProfileViewSet,basename='psychologist-profile')
 
-router.register(r"psychologists/therapies/confirmed",scheduler_views.PsychologistsTherapiesConfirmedViewSet,basename="psychologists/therapies/confirmed")
-router.register(r"psychologists/therapies/pending",scheduler_views.PsychologistsTherapiesPendingViewSet,basename="psychologists/therapies/pending")
-
-router.register(r"psychologists-schedule",scheduler_views.ClientViewPsychologistsTherapiesViewSet,basename="psychologists-schedule")
+router.register(r'psychologists', account_views.PsychologistViewSet)
 router.register(r"client-goes-to",scheduler_views.GoesToViewSet,basename="client-goes-to")
+router.register(r'schedule-therapy', scheduler_views.ScheduleTherapyViewSet) #client schedules therapy
+router.register(r"psychologists-schedule",scheduler_views.ClientViewPsychologistsFullcalendarViewSet,basename="psychologists-schedule")
 
-router.register(r"psychologists-fullcalendar",scheduler_views.PsychologistsFullcalendarViewSet,basename="psychologists-fullcalendar")
 router.register(r"psychologists-clients",scheduler_views.PsychologistsClientsViewSet,basename="psychologists-clients")
-
+router.register(r"psychologists/therapies/pending",scheduler_views.PsychologistsTherapiesPendingViewSet,basename="psychologists/therapies/pending")
+router.register(r"psychologists/therapies/confirmed",scheduler_views.PsychologistsFullcalendarViewSet,basename="psychologists/therapies/confirmed")
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -46,9 +43,5 @@ urlpatterns = [
 ] + urlpatterns
 
 
-#in progress
-urlpatterns = [
-    
 
-] + urlpatterns
 

@@ -51,16 +51,6 @@ class TherapySerializer(serializers.ModelSerializer):
         }
 
 
-    # def create(self, validated_data):
-    #     date=validated_data['date']
-    #     client = Client.objects.get(user=self.context['request'].user).id
-    #     psychologist = GoesTo.objects.get(client = Client.objects.get(user=self.context['request'].user)).psychologist
-    #     workinghours = WorkingHours.objects.get(time=validated_data['time']).id
-    #     confirmation = 1
-    #     new_therapy=Therapy(date=date,client=client,psychologist=psychologist,workinghours=workinghours,confirmation=confirmation)
-    #     new_therapy.save()
-    #     return new_therapy
-
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -76,8 +66,15 @@ class PsychologistsClientsSerializer(FlattenMixin, serializers.HyperlinkedModelS
         flatten = [ ('user', UserSerializer) ]
 
 
-class FullcalendarSerializer(serializers.ModelSerializer):
+class PsychologistFullcalendarSerializer(serializers.ModelSerializer):
     class Meta:
+        model = Therapy
+        fields = ('title','start','end')
+
+
+class ClientFullcalendarSerializer(serializers.ModelSerializer):
+    class Meta:
+
         model = Therapy
         fields = ('title','start','end')
 

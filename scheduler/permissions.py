@@ -12,14 +12,6 @@ class IsClientTherapyOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
          return obj.client == Client.objects.get(user=request.user)
 
-class IsEmployeeProfileOwner(permissions.BasePermission):
-    # for view permission
-    def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and Employee.objects.get(user=request.user)
-
-    # for object level permissions
-    def has_object_permission(self, request, view, obj):
-        return obj.employee == Employee.objects.get(user=request.user)
 
 class IsPsychologistTherapyOwner(permissions.BasePermission):
     # for view permission
