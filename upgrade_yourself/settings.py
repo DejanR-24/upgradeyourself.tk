@@ -120,16 +120,6 @@ DATABASES = {
 }
 
 
-
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-#         'LOCATION': 'redis://127.0.0.1:6379',
-#     }
-# }
-# # Cache time to live is 15 minutes.
-# CACHE_TTL = 60 * 15
-
 INTERNAL_IPS = [
     "127.0.0.1","3.71.157.51"
 ]
@@ -194,8 +184,6 @@ SIMPLE_JWT = {
     'LEEWAY': 0,
 
     'AUTH_HEADER_TYPES': ('Bearer',),
-
-    #'AUTH_HEADER_TYPES': ('JWT',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
@@ -219,19 +207,3 @@ EMAIL_PORT=587
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
-# DJOSER = {
-#     'SEND_ACTIVATION_EMAIL': True,
-#     'SET_USERNAME_RETYPE':True,
-#     'SET_PASSWORD_RETYPE':True,
-#     'USERNAME_CHANGED_EMAIL_CONFIRMATION':True,
-#     'PASSWORD_CHANGED_EMAIL_CONFIRMATION':True,
-#     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
-#     'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
-#     'ACTIVATION_URL': 'activate/{uid}/{token}',
-
-#     'SERIALIZERS': {
-#         'user_create': 'account.serializers.UserSerializer',
-#         'user': 'account.serializers.UserSerializer',
-#         'user_delete': 'account.serializers.UserSerializer',
-#     },
-# }
