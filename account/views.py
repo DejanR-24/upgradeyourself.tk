@@ -1,5 +1,10 @@
+from base64 import b64encode
 from django.contrib.auth.models import User
-from rest_framework import viewsets, mixins,permissions
+from rest_framework import viewsets, mixins,permissions, parsers
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
 
 from .serializers import UserSerializer, ClientSerializer, ClientProfileSerializer,  EmployeeSerializer, EmployeeProfileSerializer, PsychologistSerializer, PsychologistProfileSerializer
 from .models import Client, Employee, Psychologist
@@ -86,3 +91,14 @@ class PsychologistProfileViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin,
     
     def get_queryset(self):
         return Psychologist.objects.filter(employee=Employee.objects.get(user=self.request.user))
+
+
+
+class UploadProfilePictureViewSet(mixins.RetrieveModelMixin,
+                   mixins.UpdateModelMixin,
+                   mixins.ListModelMixin,
+                   viewsets.GenericViewSet):
+    permission_classes = (IsSuperAdmin,)
+    serializer_class = (EmployeeSerializer)
+    queryset = Employee.objects.filter()
+    parser_classes = (parsers.MultiPartParser,parsers.JSONParser)

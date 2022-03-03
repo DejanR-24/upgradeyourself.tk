@@ -63,7 +63,7 @@ class GoesToViewSet(mixins.CreateModelMixin,
 #         return Therapy.objects.filter(psychologist=Psychologist.objects.get(employee=Employee.objects.get(user=self.request.user)),confirmation__id=2,date__gte = datetime.date.today(),date__lte = datetime.date.today() + datetime.timedelta(days=7)).order_by('date')
 
 
-class PsychologistsTherapiesPendingViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+class PsychologistsTherapiesPendingViewSet(mixins.ListModelMixin,mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
     """
     API endpoint that allows psychologist to see pending requests for therapies from clients.
     """
@@ -85,7 +85,7 @@ class ClientViewPsychologistsFullcalendarViewSet(mixins.ListModelMixin,viewsets.
         return Therapy.objects.filter(psychologist=GoesTo.objects.get(client=Client.objects.get(user=self.request.user)).psychologist,confirmation=2,date__gte = datetime.date.today(),date__lte = datetime.date.today() + datetime.timedelta(days=7)).order_by('date')
 
 
-class PsychologistsFullcalendarViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
+class PsychologistsTherapiesConfirmedViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
     """
     API endpoint that  allows psychologist to see his confirmed schedule.
     """

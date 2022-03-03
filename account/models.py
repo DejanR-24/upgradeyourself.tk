@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils.translation import gettext_lazy as _
 
 GENDER_CHOICES = (
     (0, 'not specified'),
@@ -8,6 +8,12 @@ GENDER_CHOICES = (
     (2, 'female'),
     (3, 'other'),
 )
+
+def upload_to(instance, filename):
+    return 'profile_picture/{filename}'.format(filename=filename)
+
+
+
 class Client(models.Model):
     user = models.OneToOneField(User, unique=True,on_delete=models.CASCADE)
     phonenumber = models.CharField(max_length=10,verbose_name="phone number")
@@ -28,7 +34,7 @@ class Client(models.Model):
 class Employee(models.Model):
    user = models.OneToOneField(User, unique = True, on_delete=models.CASCADE)
    phonenumber = models.CharField(max_length=10,verbose_name="phone number")
-   profile_picture = models.URLField(default="")
+   profile_picture = models.ImageField(_("Image"),upload_to=upload_to, default='profile_picetur/avatar.jpg')
 
 class Psychologist(models.Model):
    employee = models.OneToOneField(Employee,unique=True, on_delete=models.CASCADE)

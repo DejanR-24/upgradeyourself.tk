@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
-    'corsheaders',
+    #'corsheaders',
     "debug_toolbar",
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -69,7 +69,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     "debug_toolbar.middleware.DebugToolbarMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    #'corsheaders.middleware.CorsMiddleware',
+    "upgrade_yourself.middleware.CORSMiddleware",
 ]
 
 ROOT_URLCONF = 'upgrade_yourself.urls'
@@ -207,3 +208,5 @@ EMAIL_PORT=587
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
+MEDIA_URL = '/media/'

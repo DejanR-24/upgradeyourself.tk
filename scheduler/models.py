@@ -35,10 +35,7 @@ class TherapyManager(models.Manager):
         obj_data['end']=end
         return super().create(**obj_data) 
 
-    # def update(self, instance,**obj_data):
-    #     instance.confirmation = obj_data['confirmation']
-    #     instance.save()
-    #     return instance
+
 
 
 class Therapy(models.Model):

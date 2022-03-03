@@ -4,8 +4,9 @@ from re import I
 from rest_framework import serializers,mixins
 from django.contrib.auth.models import User
 
-from .models import  ConfirmationStatus, WorkingHours, Therapy, GoesTo#,Fullcalendar
+from .models import  ConfirmationStatus, WorkingHours, Therapy, GoesTo
 from account.models import Client, Psychologist
+from my_auth.utils import Util
 
 class WorkingHoursSerializer(serializers.ModelSerializer):
 
@@ -50,7 +51,25 @@ class TherapySerializer(serializers.ModelSerializer):
             'end': {'read_only': True}
         }
 
-
+    def update(self, instance, validated_data):
+        if instance.confirmation != validated_data['confirmation']:
+            client=instance.client
+            if validated_data['confirmation'] == ConfirmationStatus.objects.get(id=2):   
+                email_subject='Response for therapy request on ' + str(instance.date) + " at " + str(instance.workinghours.time)
+                email_body='Dear ' + client.user.first_name + ',\n\nWe are happy to inform you that your therapy appointment is confirmed. We are grateful to you for using our services. \n\nAll the best,\n UpgradeYourself Team'
+                send_to=client.user.email
+                data={'email_body':email_body,'send_to':send_to,'email_subject':email_subject}
+                Util.send_email(data)
+                instance.confirmation = validated_data['confirmation']
+                instance.save()
+                return instance
+            else:
+                email_subject='Response for therapy request on ' + str(instance.date) + " at " + str(instance.workinghours.time)
+                email_body='Dear ' + client.user.first_name + ',\n\nWe are so sorry, but your psychologist has to reschedule therapy appointment, please visit our site to make a new request. We are grateful to you for using our services.\n\nAll the best,\n UpgradeYourself Team'
+                send_to=client.user.email
+                data={'email_body':email_body,'send_to':send_to,'email_subject':email_subject}
+                Util.send_email(data)   
+                instance.delete()
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,6 +77,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['first_name','last_name','email']
     
 from .mixins import FlattenMixin
+
 
 class PsychologistsClientsSerializer(FlattenMixin, serializers.HyperlinkedModelSerializer):
     class Meta:

@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import include, path, re_path
 from rest_framework import routers
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
-from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 from account import views as account_views
 from scheduler import views as scheduler_views
@@ -26,7 +26,9 @@ router.register(r"psychologists-schedule",scheduler_views.ClientViewPsychologist
 
 router.register(r"psychologists-clients",scheduler_views.PsychologistsClientsViewSet,basename="psychologists-clients")
 router.register(r"psychologists/therapies/pending",scheduler_views.PsychologistsTherapiesPendingViewSet,basename="psychologists/therapies/pending")
-router.register(r"psychologists/therapies/confirmed",scheduler_views.PsychologistsFullcalendarViewSet,basename="psychologists/therapies/confirmed")
+router.register(r"psychologists/therapies/confirmed",scheduler_views.PsychologistsTherapiesConfirmedViewSet,basename="psychologists/therapies/confirmed")
+
+router.register(r"upload-profile-picture",account_views.UploadProfilePictureViewSet,basename="upload-profile-picture")
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -34,7 +36,8 @@ urlpatterns = [
     path('',include('scheduler.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     
-    path('admin/', admin.site.urls), 
+    path('admin/', admin.site.urls),
+
 ]
 
 import debug_toolbar
@@ -42,6 +45,6 @@ urlpatterns = [
     path('__debug__/', include(debug_toolbar.urls)),
 ] + urlpatterns
 
-
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
