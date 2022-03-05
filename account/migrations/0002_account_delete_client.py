@@ -9,23 +9,48 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('account', '0001_initial'),
+        ("account", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Account',
+            name="Account",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('phonenumber', models.BigIntegerField(verbose_name='phone number')),
-                ('birthdate', models.DateField(verbose_name='birth date')),
-                ('gender', models.IntegerField(choices=[(0, 'not specified'), (1, 'male'), (2, 'female'), (3, 'other')], default=0)),
-                ('is_employee', models.BooleanField(default=False)),
-                ('is_psycologist', models.BooleanField(default=False)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("phonenumber", models.BigIntegerField(verbose_name="phone number")),
+                ("birthdate", models.DateField(verbose_name="birth date")),
+                (
+                    "gender",
+                    models.IntegerField(
+                        choices=[
+                            (0, "not specified"),
+                            (1, "male"),
+                            (2, "female"),
+                            (3, "other"),
+                        ],
+                        default=0,
+                    ),
+                ),
+                ("is_employee", models.BooleanField(default=False)),
+                ("is_psycologist", models.BooleanField(default=False)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.DeleteModel(
-            name='Client',
+            name="Client",
         ),
     ]

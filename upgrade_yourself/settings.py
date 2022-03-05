@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
-    #'corsheaders',
     "debug_toolbar",
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -56,6 +55,7 @@ INSTALLED_APPS = [
     'account',
     'my_auth',
     'scheduler',
+    'symptom',
 
 ]
 
@@ -69,7 +69,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     "debug_toolbar.middleware.DebugToolbarMiddleware",
-    #'corsheaders.middleware.CorsMiddleware',
     "upgrade_yourself.middleware.CORSMiddleware",
 ]
 

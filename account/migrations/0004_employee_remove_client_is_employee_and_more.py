@@ -9,38 +9,69 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('account', '0003_rename_account_client'),
+        ("account", "0003_rename_account_client"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Employee',
+            name="Employee",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('phonenumber', models.CharField(max_length=10, verbose_name='phone number')),
-                ('profile_picture', models.URLField()),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "phonenumber",
+                    models.CharField(max_length=10, verbose_name="phone number"),
+                ),
+                ("profile_picture", models.URLField()),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.RemoveField(
-            model_name='client',
-            name='is_employee',
+            model_name="client",
+            name="is_employee",
         ),
         migrations.RemoveField(
-            model_name='client',
-            name='is_psycologist',
+            model_name="client",
+            name="is_psycologist",
         ),
         migrations.AlterField(
-            model_name='client',
-            name='phonenumber',
-            field=models.CharField(max_length=10, verbose_name='phone number'),
+            model_name="client",
+            name="phonenumber",
+            field=models.CharField(max_length=10, verbose_name="phone number"),
         ),
         migrations.CreateModel(
-            name='Psychologist',
+            name="Psychologist",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('bio', models.TextField(max_length=1500)),
-                ('employee', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='account.employee')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("bio", models.TextField(max_length=1500)),
+                (
+                    "employee",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="account.employee",
+                    ),
+                ),
             ],
         ),
     ]
