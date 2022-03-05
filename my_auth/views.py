@@ -62,6 +62,7 @@ class VerifyEmailView(generics.GenericAPIView):
         except jwt.exceptions.DecodeError as indentifier:
             return Response({'error':'Invalid token'},status=status.HTTP_400_BAD_REQUEST)
 
+
 class LogoutAPIView(generics.GenericAPIView):
     serializer_class = LogoutSerializer
     permission_classes = [permissions.IsAuthenticated]
