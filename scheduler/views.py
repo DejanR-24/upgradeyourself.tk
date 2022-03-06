@@ -164,7 +164,7 @@ class ClientViewPsychologistsFullcalendarViewSet(
         )
 
 
-class PsychologistsClientsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class PsychologistsClientsViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """
     API endpoint that allows psychologist to see list of their clients.
     """
