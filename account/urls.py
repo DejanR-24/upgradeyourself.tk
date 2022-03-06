@@ -27,8 +27,8 @@ router.register(
     PsychologistProfileViewSet,
     basename="psychologist-profile",
 )
-router.register(r"psychologists", PsychologistViewSet)
-router.register(r"psychologists-admin", PsychologistAdminViewSet)
+router.register(r"psychologists", PsychologistViewSet,basename="psychologists")
+router.register(r"psychologists-admin", PsychologistAdminViewSet,basename="psychologists-admin")
 router.register(
     r"upload-profile-picture",
     UploadProfilePictureViewSet,

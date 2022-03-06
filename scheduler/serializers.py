@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from .models import ConfirmationStatus, WorkingHours, Therapy, GoesTo
 from account.models import Client
