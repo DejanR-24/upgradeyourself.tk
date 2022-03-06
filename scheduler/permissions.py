@@ -10,7 +10,7 @@ class IsClientTherapyOwner(permissions.BasePermission):
         return (
             request.user
             and request.user.is_authenticated
-            and Client.objects.get(user=request.user)
+            and Client.objects.get(user=request.user).is_verified
         )
 
     # for object level permissions
