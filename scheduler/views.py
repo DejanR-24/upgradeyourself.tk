@@ -47,7 +47,7 @@ class TherapyViewSet(
 
     queryset = Therapy.objects.all()
     serializer_class = TherapySerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsSuperAdmin]
 
 
 class ScheduleTherapyViewSet(
@@ -75,7 +75,7 @@ class GoesToViewSet(
     queryset = GoesTo.objects.all()
     serializer_class = GoesToSerializer
     permission_classes = [
-        permissions.AllowAny,
+        permissions.IsAuthenticated,
     ]
 
 
@@ -120,7 +120,7 @@ class ClientViewPsychologistsFullcalendarViewSet(
             ).psychologist,
             confirmation=2,
             date__gte=datetime.date.today(),
-            date__lte=datetime.date.today() + datetime.timedelta(days=7),
+            date__lte=datetime.date.today() + datetime.timedelta(days=14),
         ).order_by("date")
 
 
@@ -141,7 +141,7 @@ class PsychologistsTherapiesConfirmedViewSet(
             ).id,
             confirmation=2,
             date__gte=datetime.date.today(),
-            date__lte=datetime.date.today() + datetime.timedelta(days=7),
+            date__lte=datetime.date.today() + datetime.timedelta(days=14),
         ).order_by("date")
 
 

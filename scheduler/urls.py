@@ -13,7 +13,7 @@ from .views import (
 
 router = routers.SimpleRouter()
 
-router.register(r"therapy", TherapyViewSet)
+router.register(r"therapies", TherapyViewSet)
 router.register(r"working-hours", WorkingHoursViewSet)
 router.register(r"client-goes-to", GoesToViewSet, basename="client-goes-to")
 router.register(r"schedule-therapy", ScheduleTherapyViewSet)

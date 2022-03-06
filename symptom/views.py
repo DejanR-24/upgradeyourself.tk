@@ -1,6 +1,9 @@
 from rest_framework import mixins, viewsets, permissions
 
 from account.permissions import IsSuperAdmin
+from account.models import Psychologist, Employee, Client
+from scheduler.models import GoesTo
+from scheduler.permissions import IsPsychologistTherapyOwner, IsClientTherapyOwner
 from .models import (
     Symptom,
     PsychologicalDisorder,
@@ -14,6 +17,7 @@ from .serializers import (
     FeelSerializer,
     FieldOfExpertiseSerializer,
     CharacterizedBySerializer,
+    PsychologistsClientsFeelSerializer,
 )
 
 
@@ -22,11 +26,13 @@ class SymptomViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     """
     API endpoint that allows SuperAdmin and Employees to work with symptoms.
     """
+
     queryset = Symptom.objects.all()
     serializer_class = SymptomSerializer
     permission_classes = [IsSuperAdmin, permissions.IsAdminUser]
@@ -37,11 +43,13 @@ class PsychologicalDisorderViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     """
     API endpoint that allows SuperAdmin and Employees to work with psychological disorders.
     """
+
     queryset = PsychologicalDisorder.objects.all()
     serializer_class = PsychologicalDisorderSerializer
     permission_classes = [IsSuperAdmin, permissions.IsAdminUser]
@@ -52,11 +60,13 @@ class CharacterizedByViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     """
     API endpoint that allows SuperAdmin and Employees to work with connection between symptoms and psichological disorders.
     """
+
     queryset = CharacterizedBy.objects.all()
     serializer_class = CharacterizedBySerializer
     permission_classes = [IsSuperAdmin, permissions.IsAdminUser]
@@ -67,14 +77,35 @@ class FeelViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    API endpoint that allows Client to see and manage symptoms that he feels.
+    """
+
+    serializer_class = FeelSerializer
+    permission_classes = [IsClientTherapyOwner]
+
+    def get_queryset(self):
+        return Feel.objects.filter(client=Client.objects.get(user=self.request.user))
+
+
+class FeelAdminViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     """
     API endpoint that allows SuperAdmin to see conection between clients and symptoms.
     """
+
     queryset = Feel.objects.all()
     serializer_class = FeelSerializer
-    permission_classes = [IsSuperAdmin,]
+    permission_classes = [IsSuperAdmin]
 
 
 class FieldOfExpertiseViewSet(
@@ -82,11 +113,61 @@ class FieldOfExpertiseViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     """
     API endpoint that allows SuperAdmin and Employees to work with conection between psychologists and symptoms.
     """
+
+    serializer_class = FieldOfExpertiseSerializer
+    permission_classes = [IsPsychologistTherapyOwner]
+
+    def get_queryset(self):
+        return FieldOfExpertise.objects.filter(
+            psychologist=Psychologist.objects.get(
+                employee=Employee.objects.get(user=self.request.user)
+            )
+        )
+
+
+class FieldOfExpertiseAdminViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    API endpoint that allows SuperAdmin and Employees to work with conection between psychologists and symptoms.
+    """
+
     queryset = FieldOfExpertise.objects.all()
     serializer_class = FieldOfExpertiseSerializer
     permission_classes = [IsSuperAdmin, permissions.IsAdminUser]
+
+
+class FeelPsychologistsViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    API endpoint that allows SuperAdmin to see conection between clients and symptoms.
+    """
+
+    serializer_class = PsychologistsClientsFeelSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_queryset(self):
+        return Feel.objects.filter(
+            client=GoesTo.objects.get(
+                psychologist=Psychologist.objects.get(
+                    employee=Employee.objects.get(user=self.request.user)
+                )
+            ).client
+        )

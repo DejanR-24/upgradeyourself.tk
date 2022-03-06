@@ -25,6 +25,7 @@ class UserViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     """
@@ -43,6 +44,7 @@ class ClientViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     """
@@ -116,6 +118,23 @@ class PsychologistViewSet(
     permission_classes = [permissions.AllowAny]
 
 
+class PsychologistAdminViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    API endpoint that allows SuperAdmin to manage Psychologists.
+    """
+
+    queryset = Psychologist.objects.all()
+    serializer_class = PsychologistSerializer
+    permission_classes = [IsSuperAdmin]
+
+
 class PsychologistProfileViewSet(
     mixins.ListModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
 ):
@@ -143,6 +162,7 @@ class UploadProfilePictureViewSet(
     """
     API endpoint that allows psychologists add a profile picture to employees.
     """
+
     permission_classes = (IsSuperAdmin,)
     serializer_class = EmployeeSerializer
     queryset = Employee.objects.filter()

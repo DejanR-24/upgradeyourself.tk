@@ -18,6 +18,7 @@ class MyObtainTokenPairView(TokenObtainPairView):
     """
     API endpoint that allows users to login and get the tokens.
     """
+
     permission_classes = (permissions.AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
 
@@ -26,6 +27,7 @@ class RegisterView(generics.GenericAPIView):
     """
     API endpoint that allows clients to register and get the verification email.
     """
+
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
     permission_classes = [
@@ -91,6 +93,7 @@ class LogoutAPIView(generics.GenericAPIView):
     """
     API endpoint that allows users to logout and stores their refresh token on blacklist.
     """
+
     serializer_class = LogoutSerializer
     permission_classes = [permissions.IsAuthenticated]
 

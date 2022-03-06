@@ -9,6 +9,7 @@ from .views import (
     EmployeeProfileViewSet,
     PsychologistProfileViewSet,
     UploadProfilePictureViewSet,
+    PsychologistAdminViewSet,
 )
 
 router = routers.SimpleRouter()
@@ -27,6 +28,7 @@ router.register(
     basename="psychologist-profile",
 )
 router.register(r"psychologists", PsychologistViewSet)
+router.register(r"psychologists-admin", PsychologistAdminViewSet)
 router.register(
     r"upload-profile-picture",
     UploadProfilePictureViewSet,
