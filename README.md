@@ -31,8 +31,9 @@ Once pip has finished downloading the dependencies migrate db and load data in i
 ```
 login for admin is: dejan 
 password:1234
-
 ```
+also you can use api on: ![Upgrade_yourself API](https://api.upgradeyourself.tk)
+
 ### ER diagram of the project 
 ![Upgrade_yourself](https://user-images.githubusercontent.com/67160398/156899983-8afe7e96-3aed-44d9-b037-f2e239298f2d.png)
 
