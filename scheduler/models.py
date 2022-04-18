@@ -1,7 +1,4 @@
-from django.db import models
-from django.db import IntegrityError
-from rest_framework import status
-from rest_framework.response import Response
+from django.db import models 
 
 from account.models import Client, Psychologist
 
@@ -57,11 +54,3 @@ class GoesTo(models.Model):
     class Meta:
         unique_together = (("client", "psychologist"),)
 
-    def create(self, validated_data):
-        client = validated_data["client"]
-        try:
-            goes_to = GoesTo(client=client, psychologist=validated_data["psychologist"])
-            goes_to.save()
-        except IntegrityError as e:
-            return Response({"detail": "input is not valid"}, status=status.HTTP_400)
-        return goes_to

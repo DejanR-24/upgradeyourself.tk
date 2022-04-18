@@ -2,6 +2,7 @@ from rest_framework import mixins, viewsets, permissions
 
 from account.permissions import IsSuperAdmin
 from account.models import Psychologist, Employee, Client
+from account.serializers import PsychologistProfileSerializer, PsychologistSerializer
 from scheduler.models import GoesTo
 from scheduler.permissions import IsPsychologistTherapyOwner, IsClientTherapyOwner
 from .models import (
@@ -19,7 +20,7 @@ from .serializers import (
     CharacterizedBySerializer,
     PsychologistsClientsFeelSerializer,
 )
-
+from .algorithm import get_the_psychologist
 
 class SymptomViewSet(
     mixins.CreateModelMixin,
@@ -164,10 +165,25 @@ class FeelPsychologistsViewSet(
     permission_classes = [permissions.IsAdminUser]
 
     def get_queryset(self):
-        return Feel.objects.filter(
-            client=GoesTo.objects.get(
-                psychologist=Psychologist.objects.get(
-                    employee=Employee.objects.get(user=self.request.user)
-                )
-            ).client
-        )
+        return Client.objects.values_list(
+    'user_id',
+    'feel__symptom' 
+)
+        
+class ChoosePsychologistAlogrithmViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    """
+    API endpoint that allows SuperAdmin to see conection between clients and symptoms.
+    """
+
+    serializer_class = PsychologistSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        return Psychologist.objects.filter(id=get_the_psychologist(Client.objects.get(user=self.request.user)).id)

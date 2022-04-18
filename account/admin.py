@@ -4,15 +4,15 @@ from rest_framework_simplejwt import token_blacklist
 
 
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ("user", "phonenumber", "birthdate", "gender")
+    list_display = ("id","user", "phonenumber", "birthdate", "gender")
 
 
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ("user", "phonenumber", "profile_picture")
+    list_display = ("id","user", "phonenumber", "profile_picture")
 
 
 class PsychologistAdmin(admin.ModelAdmin):
-    list_display = ("employee", "bio")
+    list_display = ("id","employee", "bio")
 
 
 admin.site.register(Client, ClientAdmin)

@@ -1,6 +1,7 @@
 from rest_framework import routers
 
 from .views import (
+    ChoosePsychologistAlogrithmViewSet,
     SymptomViewSet,
     PsychologicalDisorderViewSet,
     FeelViewSet,
@@ -26,3 +27,7 @@ router.register(
     FieldOfExpertiseAdminViewSet,
     basename="field-of-expertise-admin",
 )
+
+router.register(r'check-algorithm',
+    ChoosePsychologistAlogrithmViewSet,
+    basename="check-algorithm")

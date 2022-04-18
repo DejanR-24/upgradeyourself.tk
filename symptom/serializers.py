@@ -1,4 +1,5 @@
 from email.policy import default
+from unittest.util import _MAX_LENGTH
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
@@ -69,13 +70,6 @@ class CharacterizedBySerializer(serializers.ModelSerializer):
         fields = ("symptom", "psychological_disorder")
 
 
-class PsychologistsClientsFeelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Feel
-        fields = ("client", "symptom")
-
-    def to_representation(self, obj):
-        data = super().to_representation(obj)
-        data["client"] = data["client"]["user"]["username"]
-        data["symptom"] = data["symptom"]["name"]
-        return data
+class PsychologistsClientsFeelSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
+    symptom = serializers.CharField(max_length=50)

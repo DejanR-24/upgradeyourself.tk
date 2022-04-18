@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
+from django.db import IntegrityError
+from rest_framework.exceptions import ValidationError
 
 from .models import ConfirmationStatus, WorkingHours, Therapy, GoesTo
 from account.models import Client
@@ -34,16 +36,18 @@ class TherapyCreateSerializer(serializers.ModelSerializer):
         ).psychologist
         workinghours = WorkingHours.objects.get(time=validated_data["time"])
         confirmation = ConfirmationStatus.objects.get(id=1).id
-        new_therapy = Therapy.objects.create(
-            date=date,
-            client=client,
-            psychologist=psychologist,
-            workinghours=workinghours,
-            confirmation=confirmation,
-        )
-        new_therapy.save()
-        return new_therapy
-
+        try:    
+            new_therapy = Therapy.objects.create(
+                date=date,
+                client=client,
+                psychologist=psychologist,
+                workinghours=workinghours,
+                confirmation=confirmation,
+            )
+            new_therapy.save()
+            return new_therapy
+        except IntegrityError as error:
+            raise ValidationError from error
 
 class TherapySerializer(serializers.ModelSerializer):
     class Meta:
@@ -136,12 +140,16 @@ class GoesToSerializer(serializers.ModelSerializer):
         extra_kwargs = {"client": {"read_only": True}}
 
     def create(self, validated_data):
-        client = Client.objects.get(user=self.context["request"].user)
-        goes_to = GoesTo.objects.create(
-            client=client, psychologist=validated_data["psychologist"]
-        )
-        goes_to.save()
-        return goes_to
+        try:
+            client = Client.objects.get(user=self.context["request"].user)
+            goes_to = GoesTo.objects.create(
+                client=client, psychologist=validated_data["psychologist"]
+            )
+            goes_to.save()
+            return goes_to
+        except IntegrityError as error:
+            raise ValidationError from error
+
 
     def update(self, instance, validated_data):
         instance.psychologist = validated_data.get(
