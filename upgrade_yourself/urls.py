@@ -32,10 +32,10 @@ urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 
-def trigger_error(request):
-    division_by_zero = 1 / 1
+# def trigger_error(request):
+#     division_by_zero = 1 / 1
 
-urlpatterns += [
-    path('sentry-debug/', trigger_error),
-    # ...
-]
+# urlpatterns += [
+#     path('sentry-debug/', trigger_error),
+#     # ...
+# ]
